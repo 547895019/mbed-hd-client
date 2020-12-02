@@ -23,6 +23,7 @@
 
 
 #define HDC15_MAX_DEVICE_ID_LENGHT    15          // 设备ID字节数
+#define HDC15_MAX_PROGRAM_GUID_LENGHT    39
 
 #define HDC15_MD5_LENGHT             32           // MD5长度字节数
 
@@ -40,6 +41,11 @@
 #define HDC15_UDP_GET_TIMEOUT                5
 
 #define HDC15_DEVICE_NUM  1
+#define HDC15_PROGRAM_GUID_NUM  2
+
+#define HDC15_GUID_SIZE  33
+
+#define HDC15_TCP_HEADER_LENGTH   12
 
 enum HDC15_CmdType
 {
@@ -138,11 +144,16 @@ typedef struct HDC15_UdpExt
 
 typedef struct HDC15_Device
 {
-    nsapi_addr_t ip_addr;
+    char ip_addr[NSAPI_IP_SIZE];
     uint32_t version;                        //< 版本号
     uint32_t  chanege;                         //< 扩展数据起始地址
     uint8_t   id[HDC15_MAX_DEVICE_ID_LENGHT];    //< 设备ID
 } HDC15_Device;
+
+typedef struct HDC15_Program_Guid
+{
+    char guid[HDC15_MAX_PROGRAM_GUID_LENGHT];
+} HDC15_Program_Guid;
 
 typedef struct HDC15_Device_List
 {
@@ -150,11 +161,21 @@ typedef struct HDC15_Device_List
     HDC15_Device dev[HDC15_DEVICE_NUM];
 } HDC15_Device_List;
 
+typedef struct HDC15_Program_Guid_List
+{
+    uint8_t  num;
+    HDC15_Program_Guid program[HDC15_PROGRAM_GUID_NUM];
+} HDC15_Program_Guid_List;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int hd_scan_device(void);
+int hd_scan(void);
+int hd_get_guid(int id);
+int hd_textcontrol(int id, int guid, bool en, const char *text_string);
+int hd_playcontrol(int id, int guid, bool en);
 
 #ifdef __cplusplus
 } // closing brace for extern "C"
